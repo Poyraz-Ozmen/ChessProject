@@ -8,6 +8,7 @@ import './chessground-assets/chessground.cburnett.css';
 export default function App() {
   const chessgroundRef = useRef(null);
   const chessRef = useRef(new Chess());
+  const groundRef = useRef(null);
   const [, forceUpdate] = useState({});
 
   useEffect(() => {
@@ -29,27 +30,29 @@ export default function App() {
       const move = chess.move({ from: orig, to: dest });
       if (move) {
         console.log(`Moved from ${orig} to ${dest}`);
-        ground.set({ 
+        groundRef.current.set({ 
           fen: chess.fen(), 
           turnColor: chess.turn() === 'w' ? 'white' : 'black', 
           movable: { dests: updateDests() } 
         });
       } else {
         console.log(`Attempted illegal move from ${orig} to ${dest}`);
-        ground.set({ fen: chess.fen() });
+        groundRef.current.set({ fen: chess.fen() });
       }
       forceUpdate({});
     };
 
     const config = {
-      draggable: true,
+      fen: chess.fen(),
+      orientation: 'white',
+      turnColor: 'white',
       movable: {
         free: false,
         color: 'both',
         dests: updateDests(),
-        events: { after: handleMove }
       },
       events: {
+        move: handleMove,
         select: (square) => {
           const piece = chess.get(square);
           if (piece) {
@@ -59,12 +62,25 @@ export default function App() {
           }
         },
       },
+      animation: {
+        enabled: true,
+        duration: 200
+      },
+      highlight: {
+        lastMove: true,
+        check: true
+      },
+      premovable: {
+        enabled: false
+      }
     };
 
-    const ground = Chessground(chessgroundRef.current, config);
+    groundRef.current = Chessground(chessgroundRef.current, config);
 
     return () => {
-      ground.destroy();
+      if (groundRef.current) {
+        groundRef.current.destroy();
+      }
     };
   }, []);
 
