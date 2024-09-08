@@ -1,16 +1,28 @@
-// App.js
-import React from 'react';
-import GamePage from './pages/GamePage';
-import './index.css';  // Import the Tailwind CSS
+import React, { useEffect, useRef } from 'react';
+import { Chessground } from 'chessground'; // Named import
 
-import ChessBoard from './components/ChessBoard';
+import './chessground-assets/chessground.base.css';
+import './chessground-assets/chessground.brown.css';
+import './chessground-assets/chessground.cburnett.css';
 
-const App = () => {
+export default function App() {
+  const chessgroundRef = useRef(null);
+
+  useEffect(() => {
+    // Initialize the Chessground board with config and mount it to the div
+    const config = {}; // Add any configuration you need
+    const ground = Chessground(chessgroundRef.current, config);
+
+    // Clean up when component unmounts
+    return () => {
+      ground.destroy();
+    };
+  }, []);
+
   return (
-    <div className="App">
-      <ChessBoard />
+    <div>
+      {/* Render the chessboard inside this div */}
+      <div ref={chessgroundRef} style={{ width: '400px', height: '400px' }}></div>
     </div>
   );
-};
-
-export default App;
+}
