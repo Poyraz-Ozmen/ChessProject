@@ -5,7 +5,7 @@ import './chessground-assets/chessground.base.css';
 import './chessground-assets/chessground.brown.css';
 import './chessground-assets/chessground.cburnett.css';
 
-export default function Chessboard({ onGameOver }) {
+export default function Chessboard({ onGameOver, onMoveHistoryChange }) {
   const chessgroundRef = useRef(null);
   const chessRef = useRef(new Chess());
   const groundRef = useRef(null);
@@ -48,6 +48,9 @@ export default function Chessboard({ onGameOver }) {
           turnColor: chess.turn() === 'w' ? 'white' : 'black', 
           movable: { dests: updateDests() } 
         });
+        if (onMoveHistoryChange) {
+          onMoveHistoryChange(chess.history({ verbose: false }));
+        }
         checkGameOver();
       } else {
         console.log(`Attempted illegal move from ${orig} to ${dest}`);
@@ -95,7 +98,7 @@ export default function Chessboard({ onGameOver }) {
         groundRef.current.destroy();
       }
     };
-  }, [onGameOver]);
+  }, [onGameOver, onMoveHistoryChange]);
 
   return <div ref={chessgroundRef} style={{ width: '100%', height: '100%' }} />;
 }
