@@ -8,6 +8,7 @@ export default function App() {
   const [gameStatus, setGameStatus] = useState('');
   const [moveHistory, setMoveHistory] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
+  const [selectedMoveIndex, setSelectedMoveIndex] = useState(null);
 
   const handleGameOver = (status) => {
     setGameOver(true);
@@ -18,6 +19,7 @@ export default function App() {
     setGameOver(false);
     setGameStatus('');
     setMoveHistory([]);
+    setSelectedMoveIndex(null);
   };
 
   const toggleDarkMode = () => setDarkMode((d) => !d);
@@ -26,6 +28,8 @@ export default function App() {
   const moveListBg = darkMode ? '#23272f' : '#f8f8f8';
   const moveListColor = darkMode ? '#f8f8f8' : '#23272f';
   const borderColor = darkMode ? '#333' : '#ccc';
+
+  const canMove = selectedMoveIndex === null || selectedMoveIndex === moveHistory.length;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row', width: '100vw', height: '100vh', margin: 0, position: 'fixed', top: 0, left: 0, background: backgroundColor, color: moveListColor, transition: 'background 0.3s, color 0.3s' }}>
@@ -50,7 +54,7 @@ export default function App() {
       </button>
       <div style={{ flex: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
         <div style={{ width: 'min(100%, 87.5vh)', height: 'min(100%, 87.5vh)', aspectRatio: '1 / 1', background: backgroundColor, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: darkMode ? '0 0 0 2px #23272f' : '0 0 0 2px #eee' }}>
-          <Chessboard onGameOver={handleGameOver} onMoveHistoryChange={setMoveHistory} key={gameOver ? 'game-over' : 'game-active'} />
+          <Chessboard onGameOver={handleGameOver} onMoveHistoryChange={setMoveHistory} viewMoveIndex={selectedMoveIndex} canMove={canMove} key={gameOver ? 'game-over' : 'game-active'} />
           {gameOver && <GameOverlay status={gameStatus} onReset={resetGame} />}
         </div>
       </div>

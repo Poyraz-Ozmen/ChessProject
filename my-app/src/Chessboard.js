@@ -5,7 +5,7 @@ import './chessground-assets/chessground.base.css';
 import './chessground-assets/chessground.brown.css';
 import './chessground-assets/chessground.cburnett.css';
 
-export default function Chessboard({ onGameOver, onMoveHistoryChange }) {
+export default function Chessboard({ onGameOver, onMoveHistoryChange, viewMoveIndex, canMove }) {
   const chessgroundRef = useRef(null);
   const chessRef = useRef(new Chess());
   const groundRef = useRef(null);
@@ -64,11 +64,11 @@ export default function Chessboard({ onGameOver, onMoveHistoryChange }) {
       turnColor: 'white',
       movable: {
         free: false,
-        color: 'both',
+        color: canMove ? 'both' : 'none',
         dests: updateDests(),
       },
       events: {
-        move: handleMove,
+        move: canMove ? handleMove : undefined,
         select: (square) => {
           const piece = chess.get(square);
           if (piece) {
@@ -98,7 +98,7 @@ export default function Chessboard({ onGameOver, onMoveHistoryChange }) {
         groundRef.current.destroy();
       }
     };
-  }, [onGameOver, onMoveHistoryChange]);
+  }, [onGameOver, onMoveHistoryChange, canMove]);
 
   return <div ref={chessgroundRef} style={{ width: '100%', height: '100%' }} />;
 }
